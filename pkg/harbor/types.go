@@ -15,6 +15,7 @@ type Tag struct {
 	Architecture string    `json:"architecture"`
 	OS           string    `json:"os"`
 	Created      time.Time `json:"created"`
+	PullTime     time.Time `json:"pull_time"`
 }
 
 type AccessLog struct {

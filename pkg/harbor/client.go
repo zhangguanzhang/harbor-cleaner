@@ -51,11 +51,21 @@ func (c *Client) ListTags(projectName string, repoName string) ([]*Tag, error) {
 	tags := make([]*Tag, 0)
 
 	for _, arti := range artifacts {
+		// 后续推送镜像覆盖老的 tag，老镜像 tag 就为空了
+		if len(arti.Tags) == 0 {
+			tags = append(tags, &Tag{
+				Digest:   arti.Digest,
+				Created:  time.Time(arti.PushTime),
+				PullTime: time.Time(arti.PullTime),
+			})
+			continue
+		}
 		for _, tag := range arti.Tags {
 			tags = append(tags, &Tag{
-				Digest:  arti.Digest,
-				Name:    tag.Name,
-				Created: time.Time(tag.PushTime),
+				Digest:   arti.Digest,
+				Name:     tag.Name,
+				Created:  time.Time(tag.PushTime),
+				PullTime: time.Time(tag.PullTime),
 			})
 		}
 	}
@@ -64,8 +74,10 @@ func (c *Client) ListTags(projectName string, repoName string) ([]*Tag, error) {
 }
 
 func (c *Client) DeleteTag(projectName, repoName, reference, tagName string) error {
-	if err := c.client.DeleteTag(c.ctx, projectName, repoName, reference, tagName); err != nil {
-		return err
+	if tagName != "" {
+		if err := c.client.DeleteTag(c.ctx, projectName, repoName, reference, tagName); err != nil {
+			return err
+		}
 	}
 
 	art, err := c.client.GetArtifact(c.ctx, projectName, repoName, reference)

@@ -14,8 +14,12 @@ BUILD_LDFLAGS  := -ldflags "-X $(MODULE_NAME)/pkg/version.Version=$(VERSION)    
 	        $(EXTRA_LDFLAGS)"
 GO_BUILDFLAGS += $(BUILD_LDFLAGS)
 
-GO_IMG         ?= golang:1.19-alpine
+GO_IMG         ?= golang:1.20-alpine
 
 .PHONY: golangci-lint
 golangci-lint:
 	$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+.PHONY: mod
+mod:
+	$(GO) mod tidy

@@ -17,8 +17,8 @@ lint: golangci-lint
 test:
 	$(GO) test $(PKGS)
 
-.PHONY: test 
-build-local:
+.PHONY: bin 
+bin: mod
 	CGO_ENABLED=$(CGO_ENABLED) $(GO) build $(GO_BUILDFLAGS) -o $(OUTPUT_DIR)/harbor-cleaner ./cmd
 
 .PHONY: build
